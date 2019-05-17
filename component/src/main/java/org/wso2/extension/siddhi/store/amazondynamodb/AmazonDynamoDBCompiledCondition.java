@@ -34,10 +34,9 @@ public class AmazonDynamoDBCompiledCondition implements CompiledCondition {
     private StringBuilder keyCondition;
     private StringBuilder nonKeyCondition;
 
-
-    public AmazonDynamoDBCompiledCondition
-            (String compiledQuery, SortedMap<Integer, Object> parameters, SortedMap<Integer, Object> parametersConst,
-             StringBuilder keyCondition, StringBuilder nonKeyCondition) {
+    public AmazonDynamoDBCompiledCondition(String compiledQuery, SortedMap<Integer, Object> parameters,
+                                           SortedMap<Integer, Object> parametersConst, StringBuilder keyCondition,
+                                           StringBuilder nonKeyCondition) {
         this.compiledQuery = compiledQuery;
         this.parameters = parameters;
         this.parametersConst = parametersConst;
@@ -68,7 +67,6 @@ public class AmazonDynamoDBCompiledCondition implements CompiledCondition {
     public StringBuilder getNonKeyCondition() {
         return nonKeyCondition;
     }
-
 
     @Override
     public CompiledCondition cloneCompilation(String s) {

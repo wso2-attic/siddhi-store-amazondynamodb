@@ -37,9 +37,9 @@ public class AmazonDynamoDBTestUtils {
 
     public static final String TABLE_NAME = "AmazonDynamoDBTestTable";
     public static final String TABLE_NAME_ALREADY_EXIST = "Music";
-    public static final String SECRET_KEY = "MYjsdjsdsdsdsndnjjsMXc";
+    public static final String SECRET_KEY = "MZLDdDDdfkslfkd;fk;ld";
     public static final String SECRET_KEY_INVALID = "LoooS/xg/PEgVUJ5UW90000000k6nvRYJMXc";
-    public static final String ACCESS_KEY = "AUTRFGJKKV";
+    public static final String ACCESS_KEY = "AKIAY4Qjhkldjslkjf;ls";
     public static final String ACCESS_KEY_INVALID = "AKIAYIONURETJV";
     public static final String SIGNING_REGION = "us-east-1";
     public static final String SORT_KEY = "price";

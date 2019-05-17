@@ -307,7 +307,6 @@ import static org.wso2.siddhi.core.util.SiddhiConstants.ANNOTATION_STORE;
                                 "condition."
                 )
         }
-
 )
 
 /*
@@ -528,8 +527,7 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
      * @return if matching record found or not
      */
     @Override
-    protected boolean contains(Map<String, Object> containsConditionParameterMap,
-                               CompiledCondition compiledCondition) {
+    protected boolean contains(Map<String, Object> containsConditionParameterMap, CompiledCondition compiledCondition) {
         AmazonDynamoDBCompiledCondition amazonDynamoDBCompiledCondition =
                 (AmazonDynamoDBCompiledCondition) compiledCondition;
         String query = amazonDynamoDBCompiledCondition.getCompiledQuery();
@@ -722,8 +720,8 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
     protected void update(CompiledCondition compiledCondition, List<Map<String, Object>> list,
                           Map<String, CompiledExpression> map, List<Map<String, Object>> list1) {
         StringBuilder updateCondition = new StringBuilder();
-        AmazonDynamoDBCompiledCondition amazonDynamoDBCompiledCondition
-                = (AmazonDynamoDBCompiledCondition) compiledCondition;
+        AmazonDynamoDBCompiledCondition amazonDynamoDBCompiledCondition =
+                (AmazonDynamoDBCompiledCondition) compiledCondition;
         String condition = amazonDynamoDBCompiledCondition.getCompiledQuery();
         updateCondition.append(DYNAMODB_UPDATE_QUERY).append(WHITESPACE);
         for (Map.Entry<String, CompiledExpression> expression : map.entrySet()) {
@@ -759,7 +757,6 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
                     Object obj = ":" + entry.getKey();
                     variablesMap.push(obj);
                     parameterValueMap.push(entry.getValue());
-
                 }
             }
         }
@@ -1047,8 +1044,7 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
         if (compiledSelectionList.length() > 0) {
             compiledSelectionList.setLength(compiledSelectionList.length() - 2); // Removing the last comma separator.
         }
-        return new AmazonDynamoDBCompiledCondition(compiledSelectionList.toString(), paramMap,
-                null, null, null);
+        return new AmazonDynamoDBCompiledCondition(compiledSelectionList.toString(), paramMap, null, null, null);
     }
 
     private AmazonDynamoDBCompiledCondition compileClause(List<ExpressionBuilder> expressionBuilders) {
@@ -1077,8 +1073,7 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
         if (compiledSelectionList.length() > 0) {
             compiledSelectionList.setLength(compiledSelectionList.length() - 2); // Removing the last comma separator.
         }
-        return new AmazonDynamoDBCompiledCondition(compiledSelectionList.toString(), paramMap,
-                null, null, null);
+        return new AmazonDynamoDBCompiledCondition(compiledSelectionList.toString(), paramMap, null, null, null);
     }
 
     private AmazonDynamoDBCompiledCondition compileOrderByClause
@@ -1100,8 +1095,7 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
         if (compiledSelectionList.length() > 0) {
             compiledSelectionList.setLength(compiledSelectionList.length() - 2); // Removing the last comma separator.
         }
-        return new AmazonDynamoDBCompiledCondition(compiledSelectionList.toString(), paramMap,
-                null, null, null);
+        return new AmazonDynamoDBCompiledCondition(compiledSelectionList.toString(), paramMap, null, null, null);
     }
 
     /**

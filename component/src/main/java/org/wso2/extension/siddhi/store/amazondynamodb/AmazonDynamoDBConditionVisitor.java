@@ -52,12 +52,10 @@ public class AmazonDynamoDBConditionVisitor extends BaseExpressionVisitor {
     private SortedMap<Integer, Object> parameters;
     private SortedMap<Integer, Object> parametersConst;
 
-
     private int streamVarCount;
     private int constantCount;
 
-    public AmazonDynamoDBConditionVisitor(String partitionKey,
-                                          String sortKey, String primaryKeyType) {
+    public AmazonDynamoDBConditionVisitor(String partitionKey, String sortKey, String primaryKeyType) {
         this.condition = new StringBuilder();
         this.streamVarCount = 0;
         this.constantCount = 0;

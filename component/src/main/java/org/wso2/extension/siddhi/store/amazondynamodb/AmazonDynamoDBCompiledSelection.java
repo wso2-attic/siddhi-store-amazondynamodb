@@ -32,7 +32,6 @@ public class AmazonDynamoDBCompiledSelection implements CompiledSelection {
     private AmazonDynamoDBCompiledCondition compiledOrderByClause;
     private Long limit;
 
-
     public AmazonDynamoDBCompiledSelection(AmazonDynamoDBCompiledCondition compiledSelectClause,
                                            AmazonDynamoDBCompiledCondition compiledGroupByClause,
                                            AmazonDynamoDBCompiledCondition compiledHavingClause,
