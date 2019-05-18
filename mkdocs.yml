@@ -22,7 +22,7 @@ google_analytics:
 extra:
   social:
     - type: github
-      link: https://github.com/wso2/siddhi
+      link:  https://github.com/siddhi-io/siddhi
     - type: linkedin
       link: https://www.linkedin.com/groups/13553064
 pages:

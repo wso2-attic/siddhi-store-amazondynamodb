@@ -141,7 +141,6 @@ import static org.wso2.siddhi.core.util.SiddhiConstants.ANNOTATION_STORE;
                         type = {DataType.STRING},
                         optional = true,
                         defaultValue = "Sort key should be defined by the user if the table use composite primary key."
-
                 ),
                 @Parameter(
                         name = "read.capacity.units",
@@ -396,12 +395,6 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
         }
     }
 
-    /**
-     * Add records to the Table
-     *
-     * @param records records that need to be added to the table, each Object[] represent a record and it will match
-     *                the attributes of the Table Definition.
-     */
     @Override
     protected void add(List<Object[]> records) {
         try {
@@ -416,18 +409,10 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
             client.putItem(putItemRequest);
         } catch (AmazonDynamoDBException e) {
             throw new AmazonDynamoDBTableException("Error while inserting records to " + this.tableName + " : "
-                    + e.getMessage());
+                    + e.getMessage(), e);
         }
     }
 
-    /**
-     * Find records matching the compiled condition
-     *
-     * @param findConditionParameterMap map of matching StreamVariable Ids and their values corresponding to the
-     *                                  compiled condition
-     * @param compiledCondition         the compiledCondition against which records should be matched
-     * @return RecordIterator of matching records
-     */
     @Override
     protected RecordIterator<Object[]> find(Map<String, Object> findConditionParameterMap,
                                             CompiledCondition compiledCondition) {
@@ -518,14 +503,6 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
         return client.query(queryRequest);
     }
 
-    /**
-     * Check if matching record exist or not
-     *
-     * @param containsConditionParameterMap map of matching StreamVariable Ids and their values corresponding to the
-     *                                      compiled condition
-     * @param compiledCondition             the compiledCondition against which records should be matched
-     * @return if matching record found or not
-     */
     @Override
     protected boolean contains(Map<String, Object> containsConditionParameterMap, CompiledCondition compiledCondition) {
         AmazonDynamoDBCompiledCondition amazonDynamoDBCompiledCondition =
@@ -560,17 +537,10 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
             }
         } catch (AmazonDynamoDBException e) {
             throw new AmazonDynamoDBException("Error performing 'contains'  on the table : " + this.tableName + ": "
-                    + e.getMessage());
+                    + e.getMessage(), e);
         }
     }
 
-    /**
-     * Delete all matching records
-     *
-     * @param deleteConditionParameterMaps map of matching StreamVariable Ids and their values corresponding to the
-     *                                     compiled condition
-     * @param compiledCondition            the compiledCondition against which records should be matched for deletion
-     **/
     @Override
     protected void delete(List<Map<String, Object>> deleteConditionParameterMaps, CompiledCondition compiledCondition) {
         AmazonDynamoDBCompiledCondition amazonDynamoDBCompiledCondition
@@ -601,7 +571,6 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
 
         while (iterator2.hasNext() && iterator1.hasNext()) {
             valueMap.put(variablesMap.pop().toString(), parameterValueMap.pop());
-
         }
         Table table = dynamoDB.getTable(this.tableName);
         try {
@@ -622,7 +591,7 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
             }
         } catch (AmazonDynamoDBException e) {
             throw new AmazonDynamoDBException("Error deleting records from table: " + this.tableName + " : "
-                    + e.getMessage());
+                    + e.getMessage(), e);
         }
     }
 
@@ -667,8 +636,7 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
      * This method will be used to separate sort key value and partition key value from the parameter value map
      * that is used in delete operation.
      */
-    private void getPrimaryKeyValues(String condition, String[] conditionArray,
-                                     Map<Integer, Object> paramMap) {
+    private void getPrimaryKeyValues(String condition, String[] conditionArray, Map<Integer, Object> paramMap) {
         int index = 1;
         if (primaryKeyType.equals(COMPOSITE_PRIMARY_KEY)) {
             try {
@@ -685,7 +653,7 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
                 }
             } catch (AmazonDynamoDBException err) {
                 throw new AmazonDynamoDBException("Unable to query the table without specifying the primary key " +
-                        "values of the table " + this.tableName + err.getMessage());
+                        "values of the table " + this.tableName + err.getMessage(), err);
             }
         } else {
             try {
@@ -702,23 +670,14 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
                 }
             } catch (AmazonDynamoDBException err) {
                 throw new AmazonDynamoDBException("Unable to query the table without specifying the primary key " +
-                        "values of the table " + this.tableName + err.getMessage());
+                        "values of the table " + this.tableName + err.getMessage(), err);
             }
         }
     }
 
-    /**
-     * Update all matching records
-     *
-     * @param compiledCondition the compiledCondition against which records should be matched for update
-     * @param list              map of matching StreamVariable Ids and their values corresponding to the
-     *                          compiled condition based on which the records will be updated
-     * @param map               the attributes and values that should be updated if the condition matches
-     * @param list1             the attributes and values that should be updated for the matching records
-     */
     @Override
-    protected void update(CompiledCondition compiledCondition, List<Map<String, Object>> list,
-                          Map<String, CompiledExpression> map, List<Map<String, Object>> list1) {
+    protected void update(CompiledCondition compiledCondition, List<Map<String, Object>> streamVariableValueMap,
+                          Map<String, CompiledExpression> map, List<Map<String, Object>> valueMapToUpdate) {
         StringBuilder updateCondition = new StringBuilder();
         AmazonDynamoDBCompiledCondition amazonDynamoDBCompiledCondition =
                 (AmazonDynamoDBCompiledCondition) compiledCondition;
@@ -739,7 +698,7 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
         Map<Integer, Object> mapParam = new HashMap<>();
         String[] conditionArray = condition.split(DYNAMODB_AND);
         int i = 1;
-        for (Map<String, Object> map1 : list) {
+        for (Map<String, Object> map1 : streamVariableValueMap) {
             for (Map.Entry<String, Object> entry : map1.entrySet()) {
                 conditionParamMap.put(i, entry.getValue());
                 i++;
@@ -751,7 +710,7 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
         for (int j = keys.size() - 1; j >= 0; j--) {
             variablesMap.push(variableMap.get(keys.get(j)));
         }
-        for (Map<String, Object> record : list1) {
+        for (Map<String, Object> record :valueMapToUpdate) {
             for (Map.Entry<String, Object> entry : record.entrySet()) {
                 if (!entry.getKey().equals(partitionKey)) {
                     Object obj = ":" + entry.getKey();
@@ -785,24 +744,14 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
             table.updateItem(updateItemSpec);
         } catch (AmazonDynamoDBException e) {
             throw new AmazonDynamoDBTableException("Error when updating records in th table : " + this.tableName + " : "
-                    + e.getMessage());
+                    + e.getMessage(), e);
         }
     }
 
-    /**
-     * Try updating the records if they exist else add the records
-     *
-     * @param list              map of matching StreamVariable Ids and their values corresponding to the
-     *                          compiled condition based on which the records will be updated
-     * @param compiledCondition the compiledCondition against which records should be matched for update
-     * @param map               the attributes and values that should be updated if the condition matches
-     * @param list1             the values for adding new records if the update condition did not match
-     * @param list2             the attributes and values that should be updated for the matching records
-     */
     @Override
-    protected void updateOrAdd(CompiledCondition compiledCondition, List<Map<String, Object>> list,
-                               Map<String, CompiledExpression> map, List<Map<String, Object>> list1,
-                               List<Object[]> list2) {
+    protected void updateOrAdd(CompiledCondition compiledCondition, List<Map<String, Object>> streamVariableValuMap,
+                               Map<String, CompiledExpression> map, List<Map<String, Object>> valueMapToAdd,
+                               List<Object[] listOfValuesToUpdate> ) {
         StringBuilder updateCondition = new StringBuilder();
         AmazonDynamoDBCompiledCondition amazonDynamoDBCompiledCondition = (AmazonDynamoDBCompiledCondition)
                 compiledCondition;
@@ -814,7 +763,7 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
         Stack<Object> variablesMap = new Stack<>();
         Stack<Object> parameterValueMap = new Stack<>();
         Map<String, Object> attributesValueMap;
-        for (Object[] record : list2) {
+        for (Object[] record : listOfValuesToUpdate) {
             attributesValueMap = mapValues(record, attributeNames);
             for (Map.Entry<String, Object> map1 : attributesValueMap.entrySet()) {
                 if (map1.getKey().equals(partitionKey)) {
@@ -851,18 +800,11 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
                 table.updateItem(updateItemSpec);
             } catch (AmazonDynamoDBException e) {
                 throw new AmazonDynamoDBException("Error in updating or inserting records to table " + this.tableName
-                        + " : " + e.getMessage());
+                        + " : " + e.getMessage(), e);
             }
         }
     }
 
-    /**
-     * Compile the matching condition
-     *
-     * @param expressionBuilder that helps visiting the conditions in order to compile the condition
-     * @return compiled condition that can be used for matching events in find, contains, delete, update and
-     * updateOrAdd
-     */
     @Override
     protected CompiledCondition compileCondition(ExpressionBuilder expressionBuilder) {
         AmazonDynamoDBConditionVisitor visitor = new AmazonDynamoDBConditionVisitor(this.partitionKey,
@@ -872,25 +814,11 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
                 visitor.getParametersConst(), visitor.getKeyCondition(), visitor.getNonKeyCondition());
     }
 
-    /**
-     * Compile the matching condition
-     *
-     * @param expressionBuilder that helps visiting the conditions in order to compile the condition
-     * @return compiled condition that can be used for matching events in find, contains, delete, update and
-     * updateOrAdd
-     */
     @Override
     protected CompiledExpression compileSetAttribute(ExpressionBuilder expressionBuilder) {
         return compileCondition(expressionBuilder);
     }
 
-    /**
-     * This method will be called before the processing method.
-     * Intention to establish connection to publish event.
-     *
-     * @throws ConnectionUnavailableException if end point is unavailable the ConnectionUnavailableException thrown
-     *                                        such that the  system will take care retrying for connection
-     */
     @Override
     protected void connect() throws ConnectionUnavailableException {
         BasicAWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
@@ -902,19 +830,11 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
         checkAndCreateTable();
     }
 
-    /**
-     * Called after all publishing is done, or when {@link ConnectionUnavailableException} is thrown
-     * Implementation of this method should contain the steps needed to disconnect.
-     */
     @Override
     protected void disconnect() {
         dynamoDB.shutdown();
     }
 
-    /**
-     * The method can be called when removing an event receiver.
-     * The cleanups that have to be done after removing the receiver could be done here.
-     */
     @Override
     protected void destroy() {
     }
@@ -970,7 +890,6 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
         String selectors = amazonDynamoDBCompiledSelection.getCompiledSelectClause().getCompiledQuery();
         String query = amazonDynamoDBCompiledCondition.getCompiledQuery();
         StringBuilder orderByClause = new StringBuilder();
-
         Map<Integer, Object> constantMap = amazonDynamoDBCompiledCondition.getParametersConst();
         Long limit = resolveQuery(amazonDynamoDBCompiledSelection, orderByClause);
         Integer intLimit;
@@ -1025,9 +944,7 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
             AmazonDynamoDBConditionVisitor visitor = new AmazonDynamoDBConditionVisitor(this.partitionKey,
                     this.sortKey, this.primaryKeyType);
             selectAttributeBuilder.getExpressionBuilder().build(visitor);
-
             String compiledCondition = visitor.returnCondition();
-
             compiledSelectionList.append(compiledCondition);
             compiledSelectionList.append(SEPARATOR);
             Map<Integer, Object> conditionParamMap = visitor.getParameters();
@@ -1055,10 +972,8 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
             AmazonDynamoDBConditionVisitor visitor = new AmazonDynamoDBConditionVisitor(this.partitionKey,
                     this.sortKey, this.primaryKeyType);
             expressionBuilder.build(visitor);
-
             String compiledCondition = visitor.returnCondition();
             compiledSelectionList.append(compiledCondition).append(SEPARATOR);
-
             Map<Integer, Object> conditionParamMap = visitor.getParameters();
             int maxOrdinal = 0;
             for (Map.Entry<Integer, Object> entry : conditionParamMap.entrySet()) {
@@ -1084,7 +999,6 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
             AmazonDynamoDBConditionVisitor visitor = new AmazonDynamoDBConditionVisitor(this.partitionKey,
                     this.sortKey, this.primaryKeyType);
             orderByAttributeBuilder.getExpressionBuilder().build(visitor);
-
             String compiledCondition = visitor.returnCondition();
             compiledSelectionList.append(compiledCondition);
             OrderByAttribute.Order order = orderByAttributeBuilder.getOrder();
@@ -1157,7 +1071,7 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
             }
         } catch (AmazonDynamoDBTableException | InterruptedException e) {
             throw new ConnectionUnavailableException("Failed to create table " + this.tableName + " due to : "
-                    + e.getMessage());
+                    + e.getMessage(), e);
         }
     }
 }

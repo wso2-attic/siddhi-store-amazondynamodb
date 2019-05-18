@@ -50,7 +50,6 @@ public class AmazonDynamoDBTestUtils {
     private static final Log log = LogFactory.getLog(AmazonDynamoDBTestUtils.class);
     private static AmazonDynamoDB client;
 
-
     private AmazonDynamoDBTestUtils() {
     }
 

@@ -58,7 +58,7 @@ public class InsertIntoAmazonDynamoDBTestCase {
         try {
             AmazonDynamoDBTestUtils.init(TABLE_NAME);
         } catch (AmazonDynamoDBException e) {
-            log.info("Test case ignored due to :" + e.getMessage());
+            log.error("Test case ignored due to :" + e.getMessage(), e);
         }
     }
 
@@ -129,7 +129,6 @@ public class InsertIntoAmazonDynamoDBTestCase {
                 "secret.key=\"" + SECRET_KEY + "\", signing.region=\"" + SIGNING_REGION + "\", table.name = \"" +
                 TABLE_NAME + "\", read.capacity.units=\"" + READ_CAPACITY_UNITS
                 + "\", write.capacity.units=\"" + WRITE_CAPACITY_UNITS + "\")\n" +
-//                "@PrimaryKey(\"symbol\")" +
                 "define table StockTable (symbol string, price float, volume long); ";
         String query1 = "" +
                 "@info(name = 'query1') " +

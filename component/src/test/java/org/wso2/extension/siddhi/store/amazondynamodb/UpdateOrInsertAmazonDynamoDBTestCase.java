@@ -54,7 +54,7 @@ public class UpdateOrInsertAmazonDynamoDBTestCase {
         try {
             AmazonDynamoDBTestUtils.init(TABLE_NAME);
         } catch (AmazonDynamoDBException e) {
-            log.info("Test case ignored due to " + e.getMessage());
+            log.error("Test case ignored due to " + e.getMessage(), e);
         }
     }
 
@@ -71,7 +71,6 @@ public class UpdateOrInsertAmazonDynamoDBTestCase {
                 + "\", write.capacity.units=\"" + WRITE_CAPACITY_UNITS + "\")\n" +
                 "@PrimaryKey(\"symbol\")" +
                 "define table StockTable (symbol string, price float, volume long); ";
-
         String query = "" +
                 "@info(name = 'query1') " +
                 "from StockStream " +

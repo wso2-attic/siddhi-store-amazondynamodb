@@ -62,7 +62,7 @@ public class UpdateAmazonDynamoDBTestCase {
         try {
             AmazonDynamoDBTestUtils.init(TABLE_NAME);
         } catch (AmazonDynamoDBException e) {
-            log.info("Test case ignored due to " + e.getMessage());
+            log.error("Test case ignored due to " + e.getMessage(), e);
         }
     }
 

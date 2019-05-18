@@ -56,22 +56,21 @@ public class AmazonDynamoDBIterator implements RecordIterator<Object[]> {
     }
 
     private static Object getValueFromAttributeValue(AttributeValue value) {
-        if (value == null) {
-            return null;
+        switch (value) {
+            case value.getN() != null:
+                return value.getN();
+                break;
+            case value.getS() != null:
+                return value.getS();
+                break;
+            case value.getBOOL() != null:
+                return value.getBOOL();
+                break;
+            case value.getB() != null:
+                return value.getB();
+                break;
+            default: return null;
         }
-        if (value.getN() != null) {
-            return value.getN();
-        }
-        if (value.getS() != null) {
-            return value.getS();
-        }
-        if (value.getBOOL() != null) {
-            return value.getBOOL();
-        }
-        if (value.getB() != null) {
-            return value.getB();
-        }
-        return null;
     }
 
     @Override
@@ -102,7 +101,6 @@ public class AmazonDynamoDBIterator implements RecordIterator<Object[]> {
 
     private Object[] extractRecord(QueryResult queryResult, ScanResult scanResult) {
         List<Object> objects = new ArrayList<>();
-
         if (queryResult != null) {
             for (AttributeValue attributeValue : queryResult.getItems().get(index++).values()) {
                 objects.add(getValueFromAttributeValue(attributeValue));
@@ -110,19 +108,8 @@ public class AmazonDynamoDBIterator implements RecordIterator<Object[]> {
         } else if (scanResult != null) {
             for (AttributeValue attributeValue : scanResult.getItems().get(index++).values()) {
                 objects.add(getValueFromAttributeValue(attributeValue));
-
             }
         }
         return objects.toArray();
-    }
-
-    @Override
-    public void remove() {
-        //Do nothing. This is a read-only iterator.
-    }
-
-    @Override
-    public void close() throws IOException {
-
     }
 }
