@@ -41,8 +41,8 @@ import static org.wso2.extension.siddhi.store.amazondynamodb.AmazonDynamoDBTestU
 import static org.wso2.extension.siddhi.store.amazondynamodb.AmazonDynamoDBTestUtils.TABLE_NAME;
 import static org.wso2.extension.siddhi.store.amazondynamodb.AmazonDynamoDBTestUtils.WRITE_CAPACITY_UNITS;
 
-public class AmazonDynamoDBStoreQuery {
-    private static final Log log = LogFactory.getLog(AmazonDynamoDBStoreQuery.class);
+public class AmazonDynamoDBStoreQueryTestCase {
+    private static final Log log = LogFactory.getLog(AmazonDynamoDBStoreQueryTestCase.class);
 
     @BeforeClass
     public static void startTest() {

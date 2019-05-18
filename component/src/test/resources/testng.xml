@@ -24,7 +24,7 @@
             <class name="org.wso2.extension.siddhi.store.amazondynamodb.InsertIntoAmazonDynamoDBTestCase"/>
             <class name="org.wso2.extension.siddhi.store.amazondynamodb.DefineAmazonDynamoDBTableTestCase"/>
             <class name="org.wso2.extension.siddhi.store.amazondynamodb.DeleteFromAmazonDynamoDBTestCase"/>
-            <class name="org.wso2.extension.siddhi.store.amazondynamodb.AmazonDynamoDBStoreQuery"/>
+            <class name="org.wso2.extension.siddhi.store.amazondynamodb.AmazonDynamoDBStoreQueryTestCase"/>
             <class name="org.wso2.extension.siddhi.store.amazondynamodb.ContainsAmazonDynamoDBTestCase"/>
             <class name="org.wso2.extension.siddhi.store.amazondynamodb.UpdateAmazonDynamoDBTestCase"/>
             <class name="org.wso2.extension.siddhi.store.amazondynamodb.UpdateOrInsertAmazonDynamoDBTestCase"/>

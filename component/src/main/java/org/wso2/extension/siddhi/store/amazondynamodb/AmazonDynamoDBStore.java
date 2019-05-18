@@ -536,8 +536,8 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
                 return queryResult.getScannedCount() != 0;
             }
         } catch (AmazonDynamoDBException e) {
-            throw new AmazonDynamoDBException("Error performing 'contains'  on the table : " + this.tableName + ": "
-                    + e.getMessage(), e);
+            throw new AmazonDynamoDBTableException("Error performing 'contains'  on the table : "
+                    + this.tableName + ": " + e.getMessage(), e);
         }
     }
 
@@ -590,7 +590,7 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
                 table.deleteItem(deleteItemSpec);
             }
         } catch (AmazonDynamoDBException e) {
-            throw new AmazonDynamoDBException("Error deleting records from table: " + this.tableName + " : "
+            throw new AmazonDynamoDBTableException("Error deleting records from table: " + this.tableName + " : "
                     + e.getMessage(), e);
         }
     }
@@ -652,7 +652,7 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
                     }
                 }
             } catch (AmazonDynamoDBException err) {
-                throw new AmazonDynamoDBException("Unable to query the table without specifying the primary key " +
+                throw new AmazonDynamoDBTableException("Unable to query the table without specifying the primary key " +
                         "values of the table " + this.tableName + err.getMessage(), err);
             }
         } else {
@@ -669,7 +669,7 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
                     partitionKeyValue = paramMap.get(index).toString();
                 }
             } catch (AmazonDynamoDBException err) {
-                throw new AmazonDynamoDBException("Unable to query the table without specifying the primary key " +
+                throw new AmazonDynamoDBTableException("Unable to query the table without specifying the primary key " +
                         "values of the table " + this.tableName + err.getMessage(), err);
             }
         }
@@ -751,7 +751,7 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
     @Override
     protected void updateOrAdd(CompiledCondition compiledCondition, List<Map<String, Object>> streamVariableValuMap,
                                Map<String, CompiledExpression> map, List<Map<String, Object>> valueMapToAdd,
-                               List<Object[] listOfValuesToUpdate> ) {
+                               List<Object[]> listOfValuesToUpdate ) {
         StringBuilder updateCondition = new StringBuilder();
         AmazonDynamoDBCompiledCondition amazonDynamoDBCompiledCondition = (AmazonDynamoDBCompiledCondition)
                 compiledCondition;
@@ -799,8 +799,8 @@ public class AmazonDynamoDBStore extends AbstractQueryableRecordTable {
                 }
                 table.updateItem(updateItemSpec);
             } catch (AmazonDynamoDBException e) {
-                throw new AmazonDynamoDBException("Error in updating or inserting records to table " + this.tableName
-                        + " : " + e.getMessage(), e);
+                throw new AmazonDynamoDBTableException("Error in updating or inserting records to table "
+                        + this.tableName + " : " + e.getMessage(), e);
             }
         }
     }

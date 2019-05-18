@@ -23,7 +23,6 @@ import com.amazonaws.services.dynamodbv2.model.QueryResult;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import org.wso2.siddhi.core.table.record.RecordIterator;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +68,8 @@ public class AmazonDynamoDBIterator implements RecordIterator<Object[]> {
             case value.getB() != null:
                 return value.getB();
                 break;
-            default: return null;
+            default:
+                return null;
         }
     }
 
